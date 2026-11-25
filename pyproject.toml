@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "self-healing-agentic-data-platform"
+version = "1.0.0"
+description = "Open-source data reliability control plane with Apache Iceberg V2 incident lakehouse, cross-asset lineage correlation, deterministic zero-hallucination RCA, OPA policy guardrails, and auditable self-healing remediations"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pyiceberg[sql-sqlite,pyiceberg-core]==0.12.0",
+    "duckdb==2.0.0",
+    "pyarrow==25.0.1",
+    "fastavro==1.13.1",
+    "fastapi==0.163.2",
+    "uvicorn==0.54.0",
+    "pydantic>=2.10.0,<3.0.0",
+    "prometheus-client==0.26.0",
+    "opentelemetry-api==1.45.2",
+    "opentelemetry-sdk==1.45.2",
+    "requests>=2.32.3,<3.0.0",
+    "pyyaml>=6.0.2,<7.0.0",
+    "matplotlib==3.11.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.2.0",
+    "pytest-asyncio==1.5.0",
+    "hypothesis>=6.130.0,<7.0.0",
+    "httpx>=0.28.1,<1.0.0",
+    "ruff==0.17.5",
+    "mypy==2.4.1",
+    "types-requests>=2.32.0",
+    "types-PyYAML>=6.0.12",
+]
+
+[project.scripts]
+agentic-sre = "agentic_sre.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agentic_sre", "ingestion", "models"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [".venv", ".local_data", ".tools", ".hypothesis"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+ignore = ["E501", "B008", "SIM105"]
+
+[tool.ruff.lint.per-file-ignores]
+"apps/control-plane-api/main.py" = ["E402"]
+"services/**/*.py" = ["E402"]
+"processing/**/*.py" = ["E402", "F841"]
+"benchmarks/**/*.py" = ["E402"]
+"scripts/**/*.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = ["^\\.venv/", "^\\.local_data/", "^\\.hypothesis/"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-q --tb=short"

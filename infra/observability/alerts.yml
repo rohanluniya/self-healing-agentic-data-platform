@@ -1,0 +1,46 @@
+groups:
+  - name: agentic_sre_reliability_alerts
+    rules:
+      - alert: HallucinatedRcaCitationDetected
+        expr: increase(sre_hallucinated_citations_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: data-reliability-sre
+        annotations:
+          summary: "Unverified RCA citation detected by evidence grounder"
+          description: "Zero-hallucination invariant violated: at least one RCA citation did not resolve to persisted Iceberg V2 evidence."
+          runbook: "docs/reliability.md#hallucinated-evidence-response"
+
+      - alert: RepeatedOpaUnsafeToolAttempts
+        expr: increase(sre_opa_policy_decisions_total{decision="deny"}[10m]) >= 3
+        for: 1m
+        labels:
+          severity: warning
+          team: security-platform
+        annotations:
+          summary: "Repeated OPA policy denials on remediation plane"
+          description: "Three or more remediation requests were denied by OPA Rego guardrails within 10 minutes. Inspect gold.remediation_audit_log."
+          runbook: "docs/reliability.md#opa-policy-denial-investigation"
+
+      - alert: AutoRollbackTriggered
+        expr: increase(sre_rollbacks_total{trigger="auto_post_check_failed"}[15m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: data-reliability-sre
+        annotations:
+          summary: "Automatic remediation rollback triggered after failed post-action health check"
+          description: "A self-healing remediation failed post-action verification and was automatically rolled back to its pre-action snapshot."
+          runbook: "docs/incidents/incident-postmortem-schema-breakage-and-auto-rollback.md"
+
+      - alert: QuarantineDlqSpike
+        expr: increase(sre_dlq_quarantined_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: data-ingestion
+        annotations:
+          summary: "Elevated Avro contract violations routed to bronze.quarantine_dlq"
+          description: "Check upstream producer schema compatibility in Apicurio Registry."
+          runbook: "docs/reliability.md#schema-breakage-runbook"

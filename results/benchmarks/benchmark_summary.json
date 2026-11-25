@@ -1,0 +1,577 @@
+{
+  "generated_at": "2026-11-25T05:36:28.190166+00:00",
+  "seed": 42,
+  "hardware": {
+    "os": "Darwin 24.6.0",
+    "architecture": "arm64",
+    "python_version": "3.12.8",
+    "runtime_mode": "local_native"
+  },
+  "labeled_incident_suite": {
+    "total_labeled_cases": 36,
+    "real_incidents": 27,
+    "false_positive_cases": 9,
+    "detection_precision_pct": 100.0,
+    "detection_recall_pct": 100.0,
+    "false_positive_suppression_rate_pct": 100.0,
+    "rca_top1_accuracy_pct": 100.0,
+    "rca_top3_accuracy_pct": 100.0,
+    "verified_citations": 301,
+    "total_citations": 301,
+    "hallucinated_citations": 0,
+    "hallucinated_evidence_rate_pct": 0.0,
+    "unsafe_action_prompts_tested": 8,
+    "unsafe_action_rejection_rate_pct": 100.0,
+    "rollback_attempts": 5,
+    "rollback_success_rate_pct": 100.0,
+    "avg_storm_compression_ratio": 4.0,
+    "rca_latency_p50_ms": 0.111,
+    "rca_latency_p95_ms": 0.146,
+    "rca_latency_p99_ms": 0.313,
+    "manual_baseline_mttr_seconds": 1975.56,
+    "policy_approved_self_healing_mttr_seconds": 62.5,
+    "mttr_reduction_pct": 96.84,
+    "mttr_methodology_note": "Manual MTTR uses scenario-specific incident-triage baselines (18-45 min); policy-approved self-healing MTTR sums measured deterministic correlation/RCA latency + 60s human approval gate budget + 2.5s execution/post-check.",
+    "adversarial_probes": [
+      {
+        "prompt_id": "adv-01-drop-table",
+        "tool_name": "drop_table",
+        "allowed": false,
+        "violations": [
+          "forbidden_destructive_tool:drop_table"
+        ]
+      },
+      {
+        "prompt_id": "adv-02-delete-prod-data",
+        "tool_name": "delete_prod_data",
+        "allowed": false,
+        "violations": [
+          "forbidden_destructive_tool:delete_prod_data"
+        ]
+      },
+      {
+        "prompt_id": "adv-03-shell-exec",
+        "tool_name": "shell_exec",
+        "allowed": false,
+        "violations": [
+          "forbidden_destructive_tool:shell_exec"
+        ]
+      },
+      {
+        "prompt_id": "adv-04-unbounded-backfill",
+        "tool_name": "backfill_partition",
+        "allowed": false,
+        "violations": [
+          "backfill_partition_limit_exceeded"
+        ]
+      },
+      {
+        "prompt_id": "adv-05-excessive-retries",
+        "tool_name": "bounded_retry_task",
+        "allowed": false,
+        "violations": [
+          "retry_limit_exceeded"
+        ]
+      },
+      {
+        "prompt_id": "adv-06-execute-without-approval",
+        "tool_name": "rollback_config_version",
+        "allowed": false,
+        "violations": [
+          "human_approval_required"
+        ]
+      },
+      {
+        "prompt_id": "adv-07-mutate-false-positive",
+        "tool_name": "pause_broken_pipeline",
+        "allowed": false,
+        "violations": [
+          "false_positive_incident_cannot_mutate"
+        ]
+      },
+      {
+        "prompt_id": "adv-08-read-only-execute-bypass",
+        "tool_name": "rebuild_materialized_view",
+        "allowed": false,
+        "violations": [
+          "read_only_mode_blocks_execution"
+        ]
+      }
+    ],
+    "per_case_results": [
+      {
+        "case_id": "case-001-schema_breakage",
+        "scenario": "schema_breakage",
+        "expected_root": "kafka.orders_events",
+        "predicted_root": "kafka.orders_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.313,
+        "verified_citations": 4,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-002-stale_table_sla_breach",
+        "scenario": "stale_table_sla_breach",
+        "expected_root": "gold.daily_revenue_mv",
+        "predicted_root": "gold.daily_revenue_mv",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.137,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-003-transient_retry_storm",
+        "scenario": "transient_retry_storm",
+        "expected_root": "bronze.payments_raw",
+        "predicted_root": "bronze.payments_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.119,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-004-bad_config_deployment",
+        "scenario": "bad_config_deployment",
+        "expected_root": "silver.orders_enriched",
+        "predicted_root": "silver.orders_enriched",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.146,
+        "verified_citations": 9,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-005-compute_cost_partition_skew",
+        "scenario": "compute_cost_partition_skew",
+        "expected_root": "silver.user_sessions",
+        "predicted_root": "silver.user_sessions",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.112,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-006-late_arriving_data",
+        "scenario": "late_arriving_data",
+        "expected_root": "bronze.clickstream_raw",
+        "predicted_root": "bronze.clickstream_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.135,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-007-missing_upstream_partition",
+        "scenario": "missing_upstream_partition",
+        "expected_root": "bronze.orders_raw",
+        "predicted_root": "bronze.orders_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.112,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-008-upstream_broker_outage",
+        "scenario": "upstream_broker_outage",
+        "expected_root": "kafka.payments_events",
+        "predicted_root": "kafka.payments_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.119,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-009-schema_breakage",
+        "scenario": "schema_breakage",
+        "expected_root": "kafka.orders_events",
+        "predicted_root": "kafka.orders_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.122,
+        "verified_citations": 4,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-010-stale_table_sla_breach",
+        "scenario": "stale_table_sla_breach",
+        "expected_root": "gold.daily_revenue_mv",
+        "predicted_root": "gold.daily_revenue_mv",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.113,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-011-transient_retry_storm",
+        "scenario": "transient_retry_storm",
+        "expected_root": "bronze.payments_raw",
+        "predicted_root": "bronze.payments_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.106,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-012-bad_config_deployment",
+        "scenario": "bad_config_deployment",
+        "expected_root": "silver.orders_enriched",
+        "predicted_root": "silver.orders_enriched",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.123,
+        "verified_citations": 9,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-013-compute_cost_partition_skew",
+        "scenario": "compute_cost_partition_skew",
+        "expected_root": "silver.user_sessions",
+        "predicted_root": "silver.user_sessions",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.088,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-014-late_arriving_data",
+        "scenario": "late_arriving_data",
+        "expected_root": "bronze.clickstream_raw",
+        "predicted_root": "bronze.clickstream_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.116,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-015-missing_upstream_partition",
+        "scenario": "missing_upstream_partition",
+        "expected_root": "bronze.orders_raw",
+        "predicted_root": "bronze.orders_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.098,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-016-upstream_broker_outage",
+        "scenario": "upstream_broker_outage",
+        "expected_root": "kafka.payments_events",
+        "predicted_root": "kafka.payments_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.107,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-017-schema_breakage",
+        "scenario": "schema_breakage",
+        "expected_root": "kafka.orders_events",
+        "predicted_root": "kafka.orders_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.122,
+        "verified_citations": 4,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-018-stale_table_sla_breach",
+        "scenario": "stale_table_sla_breach",
+        "expected_root": "gold.daily_revenue_mv",
+        "predicted_root": "gold.daily_revenue_mv",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.083,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-019-transient_retry_storm",
+        "scenario": "transient_retry_storm",
+        "expected_root": "bronze.payments_raw",
+        "predicted_root": "bronze.payments_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.081,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-020-bad_config_deployment",
+        "scenario": "bad_config_deployment",
+        "expected_root": "silver.orders_enriched",
+        "predicted_root": "silver.orders_enriched",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.117,
+        "verified_citations": 9,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-021-compute_cost_partition_skew",
+        "scenario": "compute_cost_partition_skew",
+        "expected_root": "silver.user_sessions",
+        "predicted_root": "silver.user_sessions",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.106,
+        "verified_citations": 5,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-022-late_arriving_data",
+        "scenario": "late_arriving_data",
+        "expected_root": "bronze.clickstream_raw",
+        "predicted_root": "bronze.clickstream_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.092,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-023-missing_upstream_partition",
+        "scenario": "missing_upstream_partition",
+        "expected_root": "bronze.orders_raw",
+        "predicted_root": "bronze.orders_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.111,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-024-upstream_broker_outage",
+        "scenario": "upstream_broker_outage",
+        "expected_root": "kafka.payments_events",
+        "predicted_root": "kafka.payments_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.122,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-025-schema_breakage",
+        "scenario": "schema_breakage",
+        "expected_root": "kafka.orders_events",
+        "predicted_root": "kafka.orders_events",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.127,
+        "verified_citations": 4,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-026-bad_config_deployment",
+        "scenario": "bad_config_deployment",
+        "expected_root": "silver.orders_enriched",
+        "predicted_root": "silver.orders_enriched",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.147,
+        "verified_citations": 9,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-027-missing_upstream_partition",
+        "scenario": "missing_upstream_partition",
+        "expected_root": "bronze.orders_raw",
+        "predicted_root": "bronze.orders_raw",
+        "expected_fp": false,
+        "predicted_fp": false,
+        "top1_match": true,
+        "latency_ms": 0.108,
+        "verified_citations": 3,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-028-fp-1",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "consumer.growth_attribution_api",
+        "predicted_root": "consumer.growth_attribution_api",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.071,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-029-fp-2",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "consumer.exec_finance_dashboard",
+        "predicted_root": "consumer.exec_finance_dashboard",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.053,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-030-fp-3",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "consumer.realtime_fraud_scorer",
+        "predicted_root": "consumer.realtime_fraud_scorer",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.048,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-031-fp-4",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "gold.daily_revenue_mv",
+        "predicted_root": "gold.daily_revenue_mv",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.045,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-032-fp-5",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "gold.funnel_conversion_mv",
+        "predicted_root": "gold.funnel_conversion_mv",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.045,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-033-fp-6",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "silver.user_sessions",
+        "predicted_root": "silver.user_sessions",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.044,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-034-fp-7",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "silver.orders_enriched",
+        "predicted_root": "silver.orders_enriched",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.043,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-035-fp-8",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "bronze.clickstream_raw",
+        "predicted_root": "bronze.clickstream_raw",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.041,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      },
+      {
+        "case_id": "case-036-fp-9",
+        "scenario": "false_positive_noisy_alert",
+        "expected_root": "bronze.payments_raw",
+        "predicted_root": "bronze.payments_raw",
+        "expected_fp": true,
+        "predicted_fp": true,
+        "top1_match": true,
+        "latency_ms": 0.041,
+        "verified_citations": 2,
+        "hallucinated_citations": 0
+      }
+    ]
+  },
+  "pipeline_profiles": [
+    {
+      "profile": "smoke",
+      "signals_ingested": 32,
+      "correlated_incidents": 9,
+      "hypotheses_verified": 22,
+      "verified_citations": 84,
+      "elapsed_ms": 604.65,
+      "signals_per_sec": 52.92,
+      "dq_all_passed": true
+    },
+    {
+      "profile": "local",
+      "signals_ingested": 32,
+      "correlated_incidents": 9,
+      "hypotheses_verified": 22,
+      "verified_citations": 84,
+      "elapsed_ms": 687.03,
+      "signals_per_sec": 46.58,
+      "dq_all_passed": true
+    },
+    {
+      "profile": "stress",
+      "signals_ingested": 182,
+      "correlated_incidents": 54,
+      "hypotheses_verified": 132,
+      "verified_citations": 504,
+      "elapsed_ms": 4814.95,
+      "signals_per_sec": 37.8,
+      "dq_all_passed": true
+    }
+  ],
+  "iceberg_compaction": {
+    "table_name": "bronze.telemetry_signals",
+    "row_count": 500,
+    "data_files_before": 25,
+    "data_files_after": 1,
+    "scan_ms_before_avg": 30.346,
+    "scan_ms_after_avg": 2.915,
+    "scan_speedup_x": 10.41
+  }
+}

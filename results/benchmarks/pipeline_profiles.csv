@@ -1,0 +1,4 @@
+profile,signals_ingested,correlated_incidents,hypotheses_verified,verified_citations,elapsed_ms,signals_per_sec,dq_all_passed
+smoke,32,9,22,84,604.65,52.92,True
+local,32,9,22,84,687.03,46.58,True
+stress,182,54,132,504,4814.95,37.8,True

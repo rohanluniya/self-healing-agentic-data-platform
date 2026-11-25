@@ -1,0 +1,13 @@
+.venv/
+.local_data/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.DS_Store
+.env
+*.log
+/tmp/

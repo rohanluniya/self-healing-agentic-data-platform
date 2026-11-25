@@ -1,0 +1,29 @@
+services:
+  sre-control-plane:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.standalone
+    container_name: agentic-sre-standalone
+    ports:
+      - "8060:8060"
+    environment:
+      SRE_RUNTIME_MODE: local_native
+      SRE_AGENT_MODE: read_only
+      ENABLE_LOCAL_LLM: "false"
+      SRE_DATA_DIR: /app/.local_data
+    volumes:
+      - sre_standalone_data:/app/.local_data
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8060/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  sre_standalone_data:

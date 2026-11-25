@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-11-25T05:41:37.966318+00:00",
+  "total_drills": 8,
+  "passed_drills": 8,
+  "all_passed": true,
+  "drills": [
+    {
+      "drill_id": "drill_01_cascading_upstream_outage",
+      "title": "Cascading 4-hop Kafka broker outage storm compressed to single upstream root cause",
+      "passed": true,
+      "elapsed_ms": 0.56,
+      "evidence": {
+        "raw_alerts": 4,
+        "correlated_incidents": 1,
+        "root_asset": "kafka.payments_events",
+        "verified_citations": 3
+      }
+    },
+    {
+      "drill_id": "drill_02_auto_rollback_failed_post_check",
+      "title": "Automatic rollback triggered on failed post-action health check restores pre-action snapshot",
+      "passed": true,
+      "elapsed_ms": 712.37,
+      "evidence": {
+        "pre_version": "v2.14.0",
+        "restored_version": "v2.14.0",
+        "status": "ROLLED_BACK"
+      }
+    },
+    {
+      "drill_id": "drill_03_opa_unsafe_action_denial",
+      "title": "OPA hard-denies drop_table, delete_prod_data, shell_exec, and unbounded 500-partition backfill",
+      "passed": true,
+      "elapsed_ms": 689.03,
+      "evidence": {
+        "unsafe_attempts": 4,
+        "denied": 4,
+        "rejection_rate_pct": 100.0
+      }
+    },
+    {
+      "drill_id": "drill_04_idempotent_approval_and_execution",
+      "title": "Duplicate approvals and 3x repeated execution calls execute mutation strictly once",
+      "passed": true,
+      "elapsed_ms": 667.01,
+      "evidence": {
+        "execute_calls": 3,
+        "actual_executions": 1,
+        "replays_guarded": 2
+      }
+    },
+    {
+      "drill_id": "drill_05_false_positive_suppression",
+      "title": "False-positive noisy alerts 100% suppressed and hard-blocked from mutating platform state",
+      "passed": true,
+      "elapsed_ms": 535.9,
+      "evidence": {
+        "noisy_spikes_tested": 5,
+        "suppressed": 5,
+        "fp_mutation_blocked": true
+      }
+    },
+    {
+      "drill_id": "drill_06_state_loss_iceberg_rebuild",
+      "title": "Control-plane operational state wiped and reconstructed identically from Apache Iceberg V2",
+      "passed": true,
+      "elapsed_ms": 615.92,
+      "evidence": {
+        "rebuilt_from_iceberg": true,
+        "signals_replayed": 32,
+        "completed_plans_reapplied": 1,
+        "assets_restored": 13
+      }
+    },
+    {
+      "drill_id": "drill_07_malformed_dlq_quarantine_replay",
+      "title": "Malformed JSON and invalid Avro payloads isolated to Quarantine DLQ with exact replay parity",
+      "passed": true,
+      "elapsed_ms": 2.0,
+      "evidence": {
+        "valid_ingested": 5,
+        "quarantined_dlq": 2,
+        "duplicates_dropped": 1
+      }
+    },
+    {
+      "drill_id": "drill_08_audit_hash_chain_tamper_detection",
+      "title": "Cryptographic SHA-256 audit hash chain passes intact and detects single-field tampering",
+      "passed": true,
+      "elapsed_ms": 614.21,
+      "evidence": {
+        "entries_verified": 10,
+        "intact_valid": true,
+        "tampered_valid": false,
+        "tamper_reason": "Tampered entry_hash at index 9 (audit_id=aud-4d607d386382)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "type": "record",
+  "name": "TelemetrySignal",
+  "namespace": "io.agenticsre.contracts",
+  "doc": "Backward-compatible v2 telemetry signal contract adding cost attribution, retractions, and lineage job metadata.",
+  "fields": [
+    {"name": "signal_id", "type": "string"},
+    {
+      "name": "signal_type",
+      "type": {
+        "type": "enum",
+        "name": "SignalType",
+        "symbols": [
+          "LOG_ERROR",
+          "METRIC_ANOMALY",
+          "TRACE_SPAN_ERROR",
+          "AIRFLOW_TASK_EVENT",
+          "DQ_FAILURE",
+          "DEPLOYMENT_EVENT",
+          "LINEAGE_EVENT",
+          "SCHEMA_CONTRACT_ERROR",
+          "BROKER_HEALTH_EVENT"
+        ]
+      }
+    },
+    {"name": "asset_id", "type": "string"},
+    {
+      "name": "severity",
+      "type": {
+        "type": "enum",
+        "name": "Severity",
+        "symbols": ["INFO", "WARNING", "ERROR", "CRITICAL"]
+      }
+    },
+    {"name": "event_time_ms", "type": "long"},
+    {"name": "processing_time_ms", "type": "long"},
+    {"name": "trace_id", "type": "string"},
+    {"name": "span_id", "type": "string"},
+    {"name": "run_id", "type": "string"},
+    {"name": "scenario_tag", "type": "string"},
+    {"name": "metric_name", "type": ["null", "string"], "default": null},
+    {"name": "metric_value", "type": ["null", "double"], "default": null},
+    {"name": "message", "type": "string"},
+    {"name": "commit_version", "type": ["null", "string"], "default": null},
+    {"name": "partition_key", "type": ["null", "string"], "default": null},
+    {"name": "schema_version", "type": "int", "default": 2},
+    {"name": "cost_usd_delta", "type": "double", "default": 0.0},
+    {"name": "is_retraction", "type": "boolean", "default": false},
+    {"name": "lineage_job_name", "type": ["null", "string"], "default": null},
+    {"name": "producer_service", "type": ["null", "string"], "default": null}
+  ]
+}

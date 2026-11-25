@@ -1,0 +1,84 @@
+{
+  "specVersion": "2-0-2",
+  "producer": "https://github.com/ankdeshm/self-healing-agentic-data-platform",
+  "events": [
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:00:00Z",
+      "run": {"runId": "01935e8a-0001-7000-8000-000000000001"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_bronze_orders"},
+      "inputs": [{"namespace": "kafka://cluster-prod", "name": "kafka.orders_events"}],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "bronze.orders_raw"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:00:15Z",
+      "run": {"runId": "01935e8a-0002-7000-8000-000000000002"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_bronze_payments"},
+      "inputs": [{"namespace": "kafka://cluster-prod", "name": "kafka.payments_events"}],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "bronze.payments_raw"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:00:30Z",
+      "run": {"runId": "01935e8a-0003-7000-8000-000000000003"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_bronze_clickstream"},
+      "inputs": [{"namespace": "kafka://cluster-prod", "name": "kafka.clickstream_events"}],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "bronze.clickstream_raw"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:01:00Z",
+      "run": {"runId": "01935e8a-0004-7000-8000-000000000004"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_silver_orders_transform"},
+      "inputs": [
+        {"namespace": "iceberg://lakehouse", "name": "bronze.orders_raw"},
+        {"namespace": "iceberg://lakehouse", "name": "bronze.payments_raw"}
+      ],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "silver.orders_enriched"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:01:20Z",
+      "run": {"runId": "01935e8a-0005-7000-8000-000000000005"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_silver_sessions_transform"},
+      "inputs": [{"namespace": "iceberg://lakehouse", "name": "bronze.clickstream_raw"}],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "silver.user_sessions"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:02:00Z",
+      "run": {"runId": "01935e8a-0006-7000-8000-000000000006"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_gold_revenue_mv"},
+      "inputs": [{"namespace": "iceberg://lakehouse", "name": "silver.orders_enriched"}],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "gold.daily_revenue_mv"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:02:30Z",
+      "run": {"runId": "01935e8a-0007-7000-8000-000000000007"},
+      "job": {"namespace": "agentic-sre-platform", "name": "spark_gold_funnel_mv"},
+      "inputs": [
+        {"namespace": "iceberg://lakehouse", "name": "silver.orders_enriched"},
+        {"namespace": "iceberg://lakehouse", "name": "silver.user_sessions"}
+      ],
+      "outputs": [{"namespace": "iceberg://lakehouse", "name": "gold.funnel_conversion_mv"}]
+    },
+    {
+      "eventType": "COMPLETE",
+      "eventTime": "2026-11-24T12:03:00Z",
+      "run": {"runId": "01935e8a-0008-7000-8000-000000000008"},
+      "job": {"namespace": "agentic-sre-platform", "name": "serving_sla_consumers"},
+      "inputs": [
+        {"namespace": "iceberg://lakehouse", "name": "gold.daily_revenue_mv"},
+        {"namespace": "iceberg://lakehouse", "name": "silver.orders_enriched"},
+        {"namespace": "iceberg://lakehouse", "name": "gold.funnel_conversion_mv"}
+      ],
+      "outputs": [
+        {"namespace": "serving://bi", "name": "consumer.exec_finance_dashboard"},
+        {"namespace": "serving://ml", "name": "consumer.realtime_fraud_scorer"},
+        {"namespace": "serving://api", "name": "consumer.growth_attribution_api"}
+      ]
+    }
+  ]
+}

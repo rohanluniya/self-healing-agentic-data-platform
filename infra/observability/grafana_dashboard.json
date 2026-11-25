@@ -1,0 +1,57 @@
+{
+  "title": "Self-Healing Agentic Data Platform — SRE Control Plane",
+  "uid": "agentic-sre-control-plane-v1",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active Correlated Incidents",
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "sre_active_incidents"}]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "False Positives Suppressed",
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "sre_false_positives_suppressed_total"}]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Hallucinated Evidence Citations (Target 0)",
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "sre_hallucinated_citations_total"}]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "OPA Policy Denials",
+      "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "sum(sre_opa_policy_decisions_total{decision=\"deny\"})"}]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "RCA Correlation Latency (p50 / p95)",
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, rate(sre_rca_latency_seconds_bucket[5m]))", "legendFormat": "p50"},
+        {"expr": "histogram_quantile(0.95, rate(sre_rca_latency_seconds_bucket[5m]))", "legendFormat": "p95"}
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Remediations Executed vs Rollbacks",
+      "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "sum by (outcome) (sre_remediations_executed_total)", "legendFormat": "{{outcome}}"},
+        {"expr": "sum by (trigger) (sre_rollbacks_total)", "legendFormat": "rollback:{{trigger}}"}
+      ]
+    }
+  ]
+}

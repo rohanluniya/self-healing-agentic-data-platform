@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Self-Healing Operations Control Tower — Agentic Data Platform</title>
+  <style>
+    :root {
+      --bg-0: #090e1a;
+      --bg-1: #0f172a;
+      --bg-2: #162036;
+      --bg-3: #1e293b;
+      --border: #27354f;
+      --text-0: #f1f5f9;
+      --text-1: #cbd5e1;
+      --text-2: #94a3b8;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --cyan: #38bdf8;
+      --violet: #a78bfa;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at top right, #111d36 0%, var(--bg-0) 52%);
+      color: var(--text-0);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.45;
+      min-height: 100vh;
+    }
+    .shell {
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 18px 22px 44px;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand p {
+      color: var(--text-2);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .dot-live {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.75);
+      display: inline-block;
+    }
+    .header-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-2);
+      color: var(--text-1);
+      font-family: var(--mono);
+    }
+    .pill.emerald { border-color: rgba(16,185,129,0.4); color: #6ee7b7; background: rgba(16,185,129,0.12); }
+    .pill.amber { border-color: rgba(245,158,11,0.45); color: #fcd34d; background: rgba(245,158,11,0.12); }
+    .pill.rose { border-color: rgba(244,63,94,0.45); color: #fda4af; background: rgba(244,63,94,0.14); }
+    .pill.cyan { border-color: rgba(56,189,248,0.4); color: #7dd3fc; background: rgba(56,189,248,0.12); }
+    .pill.violet { border-color: rgba(167,139,250,0.4); color: #ddd6fe; background: rgba(167,139,250,0.12); }
+    .role-select {
+      background: var(--bg-3);
+      color: var(--text-0);
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .kpi {
+      background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px;
+    }
+    .kpi .label {
+      color: var(--text-2);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .kpi .val {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 4px;
+      font-family: var(--mono);
+    }
+    .kpi .sub {
+      color: var(--text-2);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .panel {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .panel-head h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--text-0);
+    }
+    .panel-body {
+      padding: 14px 16px;
+    }
+    .col-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #lineage-svg {
+      width: 100%;
+      height: 280px;
+      background: radial-gradient(circle at center, #101b33 0%, #0a1020 100%);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: block;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-2);
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .swatch { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+
+    .incident-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 410px;
+      overflow-y: auto;
+    }
+    .inc-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--cyan);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .inc-card:hover { background: var(--bg-3); }
+    .inc-card.selected { border-color: var(--cyan); box-shadow: 0 0 0 1px rgba(56,189,248,0.45); }
+    .inc-card.sev-CRITICAL { border-left-color: var(--rose); }
+    .inc-card.sev-ERROR { border-left-color: var(--amber); }
+    .inc-card.fp { border-left-color: var(--violet); opacity: 0.92; }
+    .inc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .inc-title { font-weight: 600; font-size: 13px; color: var(--text-0); }
+    .inc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-2);
+      font-family: var(--mono);
+    }
+
+    .hyp-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin-bottom: 10px;
+    }
+    .hyp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .conf-bar-bg {
+      height: 5px;
+      background: #0b1222;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 6px 0 8px;
+    }
+    .conf-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--emerald));
+      border-radius: 99px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .chip {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.35);
+      color: #a7f3d0;
+    }
+    .chip.unverified {
+      background: rgba(244,63,94,0.15);
+      border-color: rgba(244,63,94,0.5);
+      color: #fecdd3;
+    }
+
+    .plan-box {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .preview-code {
+      background: #080d18;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: #93c5fd;
+      margin: 8px 0;
+      word-break: break-word;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    button {
+      border: 1px solid var(--border);
+      background: var(--bg-3);
+      color: var(--text-0);
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s, opacity 0.15s;
+    }
+    button:hover { opacity: 0.92; }
+    button:active { transform: translateY(1px); }
+    button.primary { background: #0284c7; border-color: #38bdf8; }
+    button.approve { background: #059669; border-color: #34d399; }
+    button.warn { background: #b45309; border-color: #fbbf24; }
+    button.danger { background: #be123c; border-color: #fb7185; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .opa-result {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      border: 1px solid var(--border);
+      background: #080d18;
+    }
+    .opa-result.deny { border-color: rgba(244,63,94,0.55); color: #fda4af; }
+    .opa-result.allow { border-color: rgba(16,185,129,0.55); color: #6ee7b7; }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    th, td {
+      text-align: left;
+      padding: 7px 9px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--text-2);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(15,23,42,0.7);
+    }
+    td.mono { font-family: var(--mono); font-size: 11px; }
+    .toast {
+      margin-bottom: 12px;
+      padding: 9px 14px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      display: none;
+      border: 1px solid var(--cyan);
+      background: rgba(56,189,248,0.12);
+      color: #bae6fd;
+    }
+    .toast.error {
+      border-color: var(--rose);
+      background: rgba(244,63,94,0.15);
+      color: #fecdd3;
+    }
+    @media (max-width: 1120px) {
+      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .main-grid, .bottom-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <h1><span class="dot-live"></span> Self-Healing Operations Control Tower</h1>
+        <p>Apache Iceberg V2 Incident Evidence Lakehouse &middot; OpenLineage Correlation &middot; Deterministic Zero-Hallucination RCA &middot; OPA Policy Guardrails</p>
+      </div>
+      <div class="header-controls">
+        <span class="pill cyan" id="pill-runtime">MODE: LOCAL_NATIVE</span>
+        <span class="pill amber" id="pill-agent-mode">DEFAULT: READ_ONLY</span>
+        <span class="pill emerald" id="pill-halluc">HALLUCINATED EVIDENCE: 0.0%</span>
+        <span class="pill violet" id="pill-chain">AUDIT CHAIN: VERIFIED</span>
+        <select id="role-switcher" class="role-select" title="Switch RBAC API-key persona">
+          <option value="operator" selected>RBAC Role: Operator (Dry-Run / Execute / Rollback)</option>
+          <option value="approver">RBAC Role: Approver (Human Approval Gate)</option>
+          <option value="viewer">RBAC Role: Viewer (Read-Only)</option>
+        </select>
+      </div>
+    </header>
+
+    <div id="toast" class="toast"></div>
+
+    <section class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Correlated Incidents</div>
+        <div class="val" id="kpi-incidents">-</div>
+        <div class="sub" id="kpi-compression">Alert storm compression</div>
+      </div>
+      <div class="kpi">
+        <div class="label">False Positives Suppressed</div>
+        <div class="val" id="kpi-fp" style="color:var(--violet)">-</div>
+        <div class="sub">0 mutations on noisy alerts</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Verified RCA Citations</div>
+        <div class="val" id="kpi-citations" style="color:var(--emerald)">-</div>
+        <div class="sub" id="kpi-halluc-sub">0.0% hallucinated evidence</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Remediation Plans</div>
+        <div class="val" id="kpi-plans" style="color:var(--cyan)">-</div>
+        <div class="sub" id="kpi-plans-sub">OPA-gated lifecycle</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Data Quality &amp; DLQ</div>
+        <div class="val" id="kpi-dq" style="color:var(--emerald)">-</div>
+        <div class="sub" id="kpi-dlq">Quarantine isolation</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Immutable Audit Chain</div>
+        <div class="val" id="kpi-audit" style="color:var(--amber)">-</div>
+        <div class="sub" id="kpi-audit-sub">SHA-256 linked in Iceberg V2</div>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <div class="col-stack">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Incident Lineage &amp; Blast-Radius Graph (OpenLineage)</h2>
+            <span class="pill cyan" id="graph-caption">13 Assets &middot; 12 Directed Edges</span>
+          </div>
+          <div class="panel-body">
+            <svg id="lineage-svg" viewBox="0 0 820 280"></svg>
+            <div class="legend">
+              <span><i class="swatch" style="background:#f43f5e"></i> Root-Cause Asset</span>
+              <span><i class="swatch" style="background:#f59e0b"></i> Downstream Blast Radius</span>
+              <span><i class="swatch" style="background:#10b981"></i> Healthy / Recovered</span>
+              <span><i class="swatch" style="background:#a78bfa"></i> Paused / Isolated</span>
+              <span><i class="swatch" style="background:#38bdf8"></i> Active Causal Edge</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Correlated Incidents &amp; False-Positive Queue</h2>
+            <span class="pill" id="incident-queue-count">Loading...</span>
+          </div>
+          <div class="panel-body">
+            <div class="incident-list" id="incident-list"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-stack">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>RCA Evidence Bundle (Zero-Hallucination Grounded)</h2>
+            <span class="pill emerald" id="evidence-badge">Select an incident</span>
+          </div>
+          <div class="panel-body" id="evidence-panel">
+            <p style="color:var(--text-2)">Loading verified Iceberg V2 evidence bundle...</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Policy-Constrained Remediation &amp; OPA Guardrails</h2>
+            <span class="pill violet">OPA Rego v1 &middot; Allowlist Only</span>
+          </div>
+          <div class="panel-body">
+            <div id="plan-panel"></div>
+
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
+              <div style="font-size:11px; color:var(--text-2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:7px;">
+                Live OPA Adversarial Policy Guardrail Tester (<code style="color:#7dd3fc">/v1/policy/evaluate</code>)
+              </div>
+              <div class="btn-row">
+                <button class="danger" onclick="testOpaPolicy('drop_table', false, {})">Deny drop_table</button>
+                <button class="danger" onclick="testOpaPolicy('shell_exec', false, {cmd:'rm -rf /'})">Deny shell_exec</button>
+                <button class="warn" onclick="testOpaPolicy('backfill_partition', false, {partition_count:365, timeout_seconds:300})">Deny 365-part backfill</button>
+                <button class="warn" onclick="testOpaPolicy('pause_broken_pipeline', true, {reason:'noise'})">Deny FP mutation</button>
+                <button class="approve" onclick="testOpaPolicy('rollback_config_version', false, {target_version:'v2.13.4', timeout_seconds:180})">Allow bounded rollback</button>
+              </div>
+              <div id="opa-result" class="opa-result deny">
+                OPA Guardrail Ready — click any policy probe above to verify live Rego enforcement.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="bottom-grid">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Immutable SHA-256 Remediation Audit Log (Iceberg V2)</h2>
+          <span class="pill emerald" id="audit-chain-badge">Chain Verified</span>
+        </div>
+        <div class="panel-body" style="max-height:300px; overflow-y:auto; padding:0">
+          <table>
+            <thead>
+              <tr>
+                <th>Seq</th>
+                <th>Event</th>
+                <th>Actor (Role)</th>
+                <th>Tool / Asset</th>
+                <th>Outcome</th>
+                <th>SHA-256 Hash</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Iceberg V2 Lakehouse Tables &amp; DQ</h2>
+          <span class="pill cyan">8 Iceberg V2 Tables</span>
+        </div>
+        <div class="panel-body" style="max-height:300px; overflow-y:auto; padding:0">
+          <table>
+            <thead>
+              <tr>
+                <th>Table</th>
+                <th>Rows</th>
+                <th>Files</th>
+                <th>Snapshots</th>
+              </tr>
+            </thead>
+            <tbody id="iceberg-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const ROLE_KEYS = {
+      viewer: "dev-viewer-key-readonly",
+      operator: "dev-operator-key-ops",
+      approver: "dev-approver-key-gov"
+    };
+
+    let state = {
+      overview: null,
+      incidents: [],
+      selectedIncidentId: null,
+      evidence: null,
+      audit: []
+    };
+
+    function currentRole() {
+      return document.getElementById("role-switcher").value;
+    }
+
+    function authHeaders() {
+      return {
+        "Content-Type": "application/json",
+        "X-API-Key": ROLE_KEYS[currentRole()]
+      };
+    }
+
+    function showToast(msg, isError = false) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.className = isError ? "toast error" : "toast";
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 5500);
+    }
+
+    async function apiFetch(url, opts = {}) {
+      const res = await fetch(url, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = typeof data.detail === "string" ? data.detail : (data.detail?.error || JSON.stringify(data.detail));
+        throw new Error(`HTTP ${res.status}: ${msg}`);
+      }
+      return data;
+    }
+
+    async function loadAll() {
+      try {
+        const [ov, incResp, audResp] = await Promise.all([
+          apiFetch("/v1/overview"),
+          apiFetch("/v1/incidents?include_false_positives=true"),
+          apiFetch("/v1/audit?limit=30")
+        ]);
+        state.overview = ov;
+        state.incidents = incResp.incidents || [];
+        state.audit = audResp.entries || [];
+
+        renderKpis(ov, audResp);
+        renderIcebergTables(ov.iceberg_tables || {});
+        renderAudit(audResp);
+
+        if (!state.selectedIncidentId && state.incidents.length > 0) {
+          const preferred = state.incidents.find(i => i.scenario_type === "bad_config_deployment") || state.incidents[0];
+          state.selectedIncidentId = preferred.incident_id;
+        }
+        renderIncidents();
+        if (state.selectedIncidentId) {
+          await selectIncident(state.selectedIncidentId);
+        }
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function renderKpis(ov, audResp) {
+      const a = ov.analytics;
+      document.getElementById("pill-runtime").textContent = `MODE: ${(ov.runtime_mode || "local_native").toUpperCase()}`;
+      document.getElementById("pill-agent-mode").textContent = `DEFAULT: ${(ov.default_agent_mode || "read_only").toUpperCase()}`;
+      document.getElementById("pill-halluc").textContent = `HALLUCINATED EVIDENCE: ${a.hallucinated_evidence_rate_pct.toFixed(1)}%`;
+      document.getElementById("pill-chain").textContent = audResp.chain_valid ? "AUDIT CHAIN: VERIFIED" : "AUDIT CHAIN: BROKEN";
+
+      document.getElementById("kpi-incidents").textContent = `${a.actionable_incidents} / ${a.total_incidents}`;
+      document.getElementById("kpi-compression").textContent = `${a.total_raw_alerts} raw alerts (${a.avg_storm_compression_ratio}x storm compression)`;
+      document.getElementById("kpi-fp").textContent = `${a.false_positives_suppressed}`;
+      document.getElementById("kpi-citations").textContent = `${a.verified_citations} / ${a.total_citations}`;
+      document.getElementById("kpi-halluc-sub").textContent = `${a.hallucinated_evidence_rate_pct.toFixed(1)}% hallucinated citations`;
+      document.getElementById("kpi-plans").textContent = `${a.remediation_plans_total}`;
+      document.getElementById("kpi-plans-sub").textContent = `${a.remediation_plans_completed} completed · ${a.remediation_plans_rolled_back} rolled back`;
+      document.getElementById("kpi-dq").textContent = `${a.dq_passed_checks} / ${a.dq_total_checks} PASS`;
+      document.getElementById("kpi-dlq").textContent = `${a.dlq_quarantined} malformed payloads in DLQ`;
+      document.getElementById("kpi-audit").textContent = `${audResp.total_entries}`;
+      document.getElementById("kpi-audit-sub").textContent = audResp.chain_valid ? "SHA-256 chain intact" : "Tamper detected";
+    }
+
+    function renderIncidents() {
+      const container = document.getElementById("incident-list");
+      document.getElementById("incident-queue-count").textContent = `${state.incidents.length} Correlated`;
+      container.innerHTML = state.incidents.map(inc => {
+        const isSel = inc.incident_id === state.selectedIncidentId;
+        const fpClass = inc.is_false_positive ? "fp" : `sev-${inc.severity}`;
+        const statusPill = inc.is_false_positive
+          ? `<span class="pill violet">SUPPRESSED FP</span>`
+          : inc.status === "mitigated"
+          ? `<span class="pill emerald">MITIGATED</span>`
+          : inc.status === "rolled_back"
+          ? `<span class="pill rose">ROLLED BACK</span>`
+          : `<span class="pill amber">${inc.severity} · OPEN</span>`;
+        return `
+          <div class="inc-card ${fpClass} ${isSel ? "selected" : ""}" onclick="selectIncident('${inc.incident_id}')">
+            <div class="inc-top">
+              <div class="inc-title">${inc.title}</div>
+              ${statusPill}
+            </div>
+            <div class="inc-meta">
+              <span>id=${inc.incident_id}</span>
+              <span>root=${inc.root_asset_id}</span>
+              <span>${inc.raw_alert_count} alerts &rarr; 1</span>
+              <span>tool=${inc.recommended_tool}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function selectIncident(incidentId) {
+      state.selectedIncidentId = incidentId;
+      renderIncidents();
+      try {
+        const ev = await apiFetch(`/v1/incidents/${incidentId}/evidence`);
+        state.evidence = ev;
+        renderLineageGraph(ev.incident);
+        renderEvidenceBundle(ev);
+        renderRemediationPanel(ev.incident);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function renderLineageGraph(selectedIncident) {
+      const svg = document.getElementById("lineage-svg");
+      const assets = state.overview?.assets || [];
+      const edges = state.overview?.lineage_edges || [];
+      const layers = ["kafka", "bronze", "silver", "gold", "consumer"];
+      const layerX = { kafka: 78, bronze: 238, silver: 405, gold: 572, consumer: 734 };
+      const byLayer = { kafka: [], bronze: [], silver: [], gold: [], consumer: [] };
+      assets.forEach(a => (byLayer[a.layer] || []).push(a));
+
+      const coords = {};
+      layers.forEach(l => {
+        const list = byLayer[l];
+        const step = 225 / Math.max(list.length, 1);
+        list.forEach((a, idx) => {
+          coords[a.asset_id] = { x: layerX[l], y: 42 + step * idx + step / 2, asset: a };
+        });
+      });
+
+      const impacted = new Set(selectedIncident?.impacted_assets || []);
+      const rootId = selectedIncident?.root_asset_id || "";
+      const activeEdges = new Set(selectedIncident?.lineage_edges || []);
+
+      let html = `
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+          </marker>
+          <marker id="arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+          </marker>
+        </defs>
+      `;
+
+      layers.forEach(l => {
+        html += `<text x="${layerX[l]}" y="20" text-anchor="middle" fill="#64748b" font-size="10" font-family="monospace" font-weight="700">${l.toUpperCase()}</text>`;
+      });
+
+      edges.forEach(e => {
+        const s = coords[e.source_asset_id];
+        const d = coords[e.target_asset_id];
+        if (!s || !d) return;
+        const isAct = activeEdges.has(e.edge_id);
+        html += `<line x1="${s.x + 58}" y1="${s.y}" x2="${d.x - 58}" y2="${d.y}" stroke="${isAct ? "#38bdf8" : "#334155"}" stroke-width="${isAct ? 2.4 : 1.2}" marker-end="url(#${isAct ? "arrow-active" : "arrow"})" />`;
+      });
+
+      Object.values(coords).forEach(({ x, y, asset }) => {
+        const isRoot = asset.asset_id === rootId;
+        const isImp = impacted.has(asset.asset_id);
+        let stroke = "#334155";
+        let fill = "#131f35";
+        if (isRoot) { stroke = "#f43f5e"; fill = "#3b0f1e"; }
+        else if (isImp) { stroke = "#f59e0b"; fill = "#33220a"; }
+        else if (asset.status === "paused") { stroke = "#a78bfa"; fill = "#231a3d"; }
+        else if (asset.status === "healthy") { stroke = "#10b981"; fill = "#0d2922"; }
+
+        const shortName = asset.asset_id.split(".")[1] || asset.asset_id;
+        html += `
+          <g>
+            <rect x="${x - 58}" y="${y - 20}" width="116" height="40" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="${isRoot ? 2.5 : 1.4}" />
+            <text x="${x}" y="${y - 3}" text-anchor="middle" fill="#f8fafc" font-size="9.5" font-family="monospace" font-weight="600">${shortName.slice(0, 17)}</text>
+            <text x="${x}" y="${y + 11}" text-anchor="middle" fill="#94a3b8" font-size="8.5" font-family="monospace">${asset.status.toUpperCase()} · ${asset.freshness_lag_minutes}m</text>
+          </g>
+        `;
+      });
+
+      svg.innerHTML = html;
+      document.getElementById("graph-caption").textContent = selectedIncident
+        ? `Root: ${rootId} · ${impacted.size} Impacted Asset(s)`
+        : `${assets.length} Assets · ${edges.length} Edges`;
+    }
+
+    function renderEvidenceBundle(ev) {
+      const badge = document.getElementById("evidence-badge");
+      badge.textContent = `${ev.verified_evidence_count}/${ev.total_evidence_count} Verified · ${ev.hallucinated_evidence_rate.toFixed(1)}% Hallucinated`;
+      const container = document.getElementById("evidence-panel");
+      container.innerHTML = ev.hypotheses.map(h => `
+        <div class="hyp-card">
+          <div class="hyp-header">
+            <strong style="color:#f8fafc">#${h.rank} ${h.root_asset_id} &middot; ${h.root_cause_category}</strong>
+            <span class="pill cyan">Confidence ${(h.confidence * 100).toFixed(1)}%</span>
+          </div>
+          <div class="conf-bar-bg"><div class="conf-bar" style="width:${(h.confidence * 100).toFixed(0)}%"></div></div>
+          <div style="color:var(--text-1); font-size:12px; margin-bottom:6px">${h.rationale}</div>
+          <div style="font-size:11px; color:var(--text-2); font-family:var(--mono)">
+            Recommended Safe Tool: <strong style="color:#7dd3fc">${h.recommended_tool}</strong>
+          </div>
+          <div class="chips">
+            ${h.evidence_pointers.slice(0, 8).map(p => `
+              <span class="chip ${p.verified ? "" : "unverified"}" title="${p.summary}">
+                ${p.verified ? "&#10003;" : "&#10007;"} ${p.pointer_type}:${p.pointer_id.slice(0, 26)}
+              </span>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderRemediationPanel(inc) {
+      const container = document.getElementById("plan-panel");
+      const plans = (state.overview?.plans || []).filter(p => p.incident_id === inc.incident_id);
+
+      if (inc.is_false_positive) {
+        container.innerHTML = `
+          <div class="plan-box" style="border-color:rgba(167,139,250,0.45)">
+            <div style="font-weight:700; color:#ddd6fe; margin-bottom:4px">False-Positive Suppression Active (Read-Only)</div>
+            <div style="color:var(--text-2); font-size:12px">
+              This alert was classified as isolated transient jitter. OPA policy hard-denies all mutating tools on suppressed false positives.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (plans.length === 0) {
+        container.innerHTML = `
+          <div class="plan-box">
+            <div style="margin-bottom:8px; color:var(--text-1)">No remediation plan proposed yet for <code>${inc.incident_id}</code>.</div>
+            <button class="primary" onclick="proposePlan('${inc.incident_id}')">1. Propose Dry-Run Preview (Operator)</button>
+          </div>
+        `;
+        return;
+      }
+
+      const plan = plans[plans.length - 1];
+      const dec = plan.policy_decision;
+      container.innerHTML = `
+        <div class="plan-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px">
+            <strong>${plan.tool_name} &rarr; <code>${plan.target_asset_id}</code></strong>
+            <span class="pill ${plan.status === "COMPLETED" ? "emerald" : plan.status === "ROLLED_BACK" ? "rose" : "amber"}">${plan.status}</span>
+          </div>
+          <div style="font-family:var(--mono); font-size:11px; color:var(--text-2)">
+            plan=${plan.plan_id} · idem=${plan.idempotency_key} · exec_count=${plan.execution_count} · risk=${dec.risk_level}
+          </div>
+          <div class="preview-code">${plan.dry_run_preview}</div>
+          <div style="font-size:11px; color:var(--text-2); margin-bottom:6px">
+            Preconditions: <strong style="color:${plan.preconditions_passed ? "#6ee7b7" : "#fda4af"}">${plan.preconditions_passed ? "PASSED" : "FAILED"}</strong> ·
+            Approved By: <strong style="color:#f8fafc">${plan.approved_by || "Pending Human Approver"}</strong>
+            ${plan.post_check_details ? `<br/>Post-Check: <span style="color:#bae6fd">${plan.post_check_details}</span>` : ""}
+          </div>
+          <div class="btn-row">
+            <button class="approve" onclick="approvePlan('${plan.plan_id}')" ${plan.status !== "AWAITING_APPROVAL" ? "disabled" : ""}>2. Approve (Approver)</button>
+            <button class="primary" onclick="executePlan('${plan.plan_id}', '${plan.idempotency_key}', false)" ${plan.status !== "APPROVED" ? "disabled" : ""}>3. Execute (Guarded Active)</button>
+            <button class="warn" onclick="executePlan('${plan.plan_id}', '${plan.idempotency_key}', true)" ${plan.status !== "APPROVED" ? "disabled" : ""}>3b. Simulate Failed Post-Check (Auto-Rollback)</button>
+            <button class="danger" onclick="rollbackPlan('${plan.plan_id}')" ${plan.status !== "COMPLETED" ? "disabled" : ""}>4. Manual Rollback</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function proposePlan(incidentId) {
+      const inc = state.incidents.find(i => i.incident_id === incidentId);
+      const params = { ...(inc.recommended_parameters || {}) };
+      const target = params.target_asset_id || inc.root_asset_id;
+      delete params.target_asset_id;
+      try {
+        await apiFetch("/v1/remediations/dry-run", {
+          method: "POST",
+          body: JSON.stringify({ incident_id: incidentId, tool_name: inc.recommended_tool, target_asset_id: target, parameters: params })
+        });
+        showToast("Dry-run plan verified by OPA and queued for human approval.");
+        await loadAll();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function approvePlan(planId) {
+      try {
+        await apiFetch(`/v1/remediations/${planId}/approve`, {
+          method: "POST",
+          body: JSON.stringify({ comment: "Approved via SRE Control Tower after inspecting Iceberg V2 evidence bundle." })
+        });
+        showToast(`Plan ${planId} approved by ${currentRole()}. Switch to Operator to execute.`);
+        await loadAll();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function executePlan(planId, idempotencyKey, simFail) {
+      try {
+        const res = await apiFetch(`/v1/remediations/${planId}/execute`, {
+          method: "POST",
+          body: JSON.stringify({
+            idempotency_key: idempotencyKey,
+            agent_mode_override: "guarded_active",
+            simulate_post_check_failure: simFail
+          })
+        });
+        showToast(
+          res.plan.rollback_performed
+            ? `Post-check failed — AUTOMATIC ROLLBACK restored pre-action snapshot for ${planId}.`
+            : `Plan ${planId} executed and post-action health verified (replay=${res.idempotent_replay}).`
+        );
+        await loadAll();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function rollbackPlan(planId) {
+      try {
+        await apiFetch(`/v1/remediations/${planId}/rollback`, {
+          method: "POST",
+          body: JSON.stringify({ reason: "Operator rollback triggered from Control Tower" })
+        });
+        showToast(`Manual rollback completed for ${planId}; pre-action state restored.`);
+        await loadAll();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function testOpaPolicy(toolName, isFp, params) {
+      const box = document.getElementById("opa-result");
+      try {
+        const res = await apiFetch("/v1/policy/evaluate", {
+          method: "POST",
+          body: JSON.stringify({
+            tool_name: toolName,
+            phase: "dry_run",
+            target_asset_id: toolName === "rollback_config_version" ? "silver.orders_enriched" : "gold.daily_revenue_mv",
+            incident_is_false_positive: isFp,
+            agent_mode: "guarded_active",
+            actor_role: "operator",
+            verified_evidence_count: 3,
+            parameters: params
+          })
+        });
+        box.className = res.allow ? "opa-result allow" : "opa-result deny";
+        box.textContent = `${res.allow ? "ALLOW" : "DENY"} [${res.engine} · ${res.policy_version}] tool=${toolName} risk=${res.risk_level} violations=${JSON.stringify(res.violations)}`;
+      } catch (err) {
+        box.className = "opa-result deny";
+        box.textContent = err.message;
+      }
+    }
+
+    function renderAudit(audResp) {
+      document.getElementById("audit-chain-badge").textContent = audResp.chain_valid
+        ? `SHA-256 Chain Verified (${audResp.total_entries})`
+        : "CHAIN INTEGRITY FAILED";
+      document.getElementById("audit-tbody").innerHTML = (audResp.entries || []).slice(0, 12).map(e => `
+        <tr>
+          <td class="mono">#${e.seq_no}</td>
+          <td class="mono" style="color:#bae6fd">${e.event_type}</td>
+          <td class="mono">${e.actor_id} (${e.actor_role})</td>
+          <td class="mono">${e.tool_name || "-"} &middot; ${e.target_asset_id || "-"}</td>
+          <td class="mono" style="color:${e.outcome.includes("DENIED") || e.outcome.includes("ROLL") ? "#fda4af" : "#6ee7b7"}">${e.outcome}</td>
+          <td class="mono" style="color:var(--text-2)">${String(e.entry_hash).slice(0, 16)}&hellip;</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderIcebergTables(tables) {
+      document.getElementById("iceberg-tbody").innerHTML = Object.entries(tables).map(([name, s]) => `
+        <tr>
+          <td class="mono" style="color:#ddd6fe">${name}</td>
+          <td class="mono">${s.rows}</td>
+          <td class="mono">${s.data_files}</td>
+          <td class="mono">${s.snapshots} (v${s.format_version})</td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("role-switcher").addEventListener("change", () => {
+      showToast(`Switched active API-key persona to RBAC role: ${currentRole().toUpperCase()}`);
+      loadAll();
+    });
+
+    loadAll().then(() => testOpaPolicy("drop_table", false, {}));
+  </script>
+</body>
+</html>

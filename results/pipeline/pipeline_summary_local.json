@@ -1,0 +1,200 @@
+{
+  "run_id": "run-local-42-7a95192a",
+  "profile": "local",
+  "seed": 42,
+  "timestamp": "2026-11-25T05:41:42.215514+00:00",
+  "elapsed_ms": 706.72,
+  "ingestion": {
+    "total_received": 36,
+    "valid_signals": 32,
+    "quarantined_dlq": 2,
+    "duplicates_suppressed": 2,
+    "retractions_processed": 1
+  },
+  "analytics": {
+    "signals_ingested": 32,
+    "dlq_quarantined": 2,
+    "total_incidents": 9,
+    "false_positives_suppressed": 1,
+    "actionable_incidents": 8,
+    "total_raw_alerts": 30,
+    "avg_storm_compression_ratio": 3.33,
+    "total_hypotheses": 22,
+    "verified_citations": 84,
+    "total_citations": 84,
+    "hallucinated_citations": 0,
+    "hallucinated_evidence_rate_pct": 0.0,
+    "dq_total_checks": 7,
+    "dq_passed_checks": 7,
+    "remediation_plans_total": 8,
+    "remediation_plans_completed": 1,
+    "remediation_plans_rolled_back": 0,
+    "audit_log_entries": 10
+  },
+  "plans_proposed": 8,
+  "demo_executed_plan_id": "plan-e965d04c6f",
+  "dq_checks": [
+    {
+      "check_id": "dq-e07ad193f8",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "bronze.telemetry_signals",
+      "check_name": "bronze_telemetry_non_empty",
+      "passed": true,
+      "metric_value": 32.0,
+      "threshold": "> 0",
+      "details": "Persisted 32 validated Avro telemetry signals",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-362b3be33a",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "bronze.telemetry_signals",
+      "check_name": "event_time_contract_valid",
+      "passed": true,
+      "metric_value": 0.0,
+      "threshold": "== 0",
+      "details": "0 records with non-positive event/processing timestamps",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-9f75dc0495",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "bronze.quarantine_dlq",
+      "check_name": "dlq_quarantine_isolation",
+      "passed": true,
+      "metric_value": 2.0,
+      "threshold": "leaked == 0",
+      "details": "Quarantined 2 malformed records; 0 leaked into bronze",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-114e75f43d",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "silver.correlated_incidents",
+      "check_name": "lineage_asset_referential_integrity",
+      "passed": true,
+      "metric_value": 0.0,
+      "threshold": "== 0",
+      "details": "9 correlated incidents checked; 0 unknown assets",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-97120f8628",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "gold.rca_hypotheses",
+      "check_name": "rca_zero_hallucinated_citations",
+      "passed": true,
+      "metric_value": 0.0,
+      "threshold": "== 0",
+      "details": "84 verified citations, 0 hallucinated citations across 22 hypotheses",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-73de161517",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "gold.remediation_plans",
+      "check_name": "false_positive_zero_mutation",
+      "passed": true,
+      "metric_value": 0.0,
+      "threshold": "== 0",
+      "details": "1 false-positive incidents tracked; 0 mutated",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    },
+    {
+      "check_id": "dq-a11c44d0f3",
+      "run_id": "run-local-42-7a95192a",
+      "table_name": "gold.remediation_audit_log",
+      "check_name": "audit_log_hash_chain_integrity",
+      "passed": true,
+      "metric_value": 10.0,
+      "threshold": "valid_chain == true",
+      "details": "Verified 10 hash-chained audit entries",
+      "evaluated_at": "2026-11-25T05:41:42.018710+00:00"
+    }
+  ],
+  "dq_all_passed": true,
+  "iceberg_tables": {
+    "bronze.telemetry_signals": {
+      "rows": 32,
+      "data_files": 1,
+      "snapshots": 3,
+      "current_snapshot_id": 7655951019030816289,
+      "format_version": 2
+    },
+    "bronze.quarantine_dlq": {
+      "rows": 2,
+      "data_files": 1,
+      "snapshots": 1,
+      "current_snapshot_id": 1243895455915065161,
+      "format_version": 2
+    },
+    "silver.asset_lineage_graph": {
+      "rows": 12,
+      "data_files": 1,
+      "snapshots": 1,
+      "current_snapshot_id": 4278027157865430030,
+      "format_version": 2
+    },
+    "silver.correlated_incidents": {
+      "rows": 9,
+      "data_files": 1,
+      "snapshots": 3,
+      "current_snapshot_id": 1031121766227812371,
+      "format_version": 2
+    },
+    "gold.rca_hypotheses": {
+      "rows": 22,
+      "data_files": 1,
+      "snapshots": 3,
+      "current_snapshot_id": 7529017991366183384,
+      "format_version": 2
+    },
+    "gold.remediation_plans": {
+      "rows": 8,
+      "data_files": 1,
+      "snapshots": 20,
+      "current_snapshot_id": 6530152044508635796,
+      "format_version": 2
+    },
+    "gold.remediation_audit_log": {
+      "rows": 10,
+      "data_files": 1,
+      "snapshots": 13,
+      "current_snapshot_id": 6610894986284114609,
+      "format_version": 2
+    },
+    "quality.dq_results": {
+      "rows": 7,
+      "data_files": 1,
+      "snapshots": 1,
+      "current_snapshot_id": 6777513058587363028,
+      "format_version": 2
+    }
+  },
+  "compaction": [
+    {
+      "table_name": "bronze.telemetry_signals",
+      "row_count": 32,
+      "data_files_before": 1,
+      "data_files_after": 1,
+      "read_ms_before": 3.693,
+      "read_ms_after": 3.228
+    },
+    {
+      "table_name": "gold.rca_hypotheses",
+      "row_count": 22,
+      "data_files_before": 1,
+      "data_files_after": 1,
+      "read_ms_before": 2.577,
+      "read_ms_after": 2.474
+    },
+    {
+      "table_name": "gold.remediation_audit_log",
+      "row_count": 10,
+      "data_files_before": 10,
+      "data_files_after": 1,
+      "read_ms_before": 47.708,
+      "read_ms_after": 2.35
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+name: CI — Self-Healing Agentic Data Platform
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  fast-quality-and-tests:
+    name: Lint, Typecheck, License Audit & Fast Test Suite
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+          python-version: "3.12.8"
+
+      - name: Sync pinned dependencies
+        run: uv sync --python 3.12 --extra dev
+
+      - name: Lint with Ruff
+        run: .venv/bin/ruff check .
+
+      - name: Typecheck with Mypy
+        run: .venv/bin/mypy agentic_sre ingestion models apps/control-plane-api/security.py
+
+      - name: Run Unit, Contract, Property, Integration, E2E & Chaos Tests
+        run: .venv/bin/pytest -v
+
+      - name: Audit Dependency Licenses & Generate CycloneDX SBOM
+        run: .venv/bin/python scripts/check_licenses.py
+
+      - name: Verify Zero Unpinned Container Tags
+        run: |
+          if grep -rnE ":lat[e]st" docker-compose.yml docker-compose.standalone.yml infra/ ; then
+            echo "Unpinned container tag found!"
+            exit 1
+          fi
+
+  opa-rego-policy-tests:
+    name: OPA Rego v1 Native Policy Unit Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run opa test via pinned OPA 1.22.3 container
+        run: |
+          docker run --rm -v "$PWD/infra/opa:/policies:ro" openpolicyagent/opa:1.22.3 test /policies -v
+
+  distributed-smoke-manual:
+    name: Distributed Stack Smoke Validation (Manual / Scheduled)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Compose Profiles Syntax
+        run: |
+          docker compose --profile core config >/dev/null
+          docker compose --profile full config >/dev/null
+          docker compose -f docker-compose.standalone.yml config >/dev/null
