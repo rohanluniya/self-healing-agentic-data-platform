@@ -75,7 +75,7 @@ Hardware: macOS `Darwin 24.6.0` (`arm64`, Apple M4 Pro, 14 cores, 48 GiB RAM), P
 Prerequisites: Python `3.12` (and optionally [`uv`](https://docs.astral.sh/uv/)).
 
 ```bash
-git clone https://github.com/ankdeshm/self-healing-agentic-data-platform.git
+git clone https://github.com/rohanluniya/self-healing-agentic-data-platform.git
 cd self-healing-agentic-data-platform
 
 # One-command bootstrap: syncs Python 3.12 env, builds 8 Iceberg V2 tables, compacts, and launches UI on :8060
